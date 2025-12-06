@@ -27,10 +27,7 @@ const Home = () => {
   const [celebrationActive, setCelebrationActive] = useState(false);
   const [confettiParticles, setConfettiParticles] = useState([]);
   const [fallingConfetti, setFallingConfetti] = useState([]);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [autoPlayInterval, setAutoPlayInterval] = useState(3000); // 3 seconds interval
   const galleryTrackRef = useRef(null);
-  const autoPlayTimerRef = useRef(null);
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -42,23 +39,21 @@ const Home = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  // Candle positions - USING PERFECT POSITIONS FROM EXISTING CODE
+  // Candle positions
   const [candlePositions] = useState([
     { id: 1, x: 36, y: 48.33 },
     { id: 2, x: 50, y: 43.33 },
     { id: 3, x: 64, y: 48.33 },
   ]);
 
-  // Photo URLs - replace with your actual images
+  // Photo URLs
   const photos = [
-    '/assests/photo1.png',
-    '/assests/photo2.png',
-    '/assests/photo3.png',
-    '/assests/photo4.png',
-    '/assests/photo1.png',
-    '/assests/photo2.png',
-    '/assests/photo3.png',
-    '/assests/photo4.png',
+    'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1511988617509-a57c8a288659?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1518495978942-83cdb633d6d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1529254479751-fbacb4c7a587?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1519861531473-920034658307?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
   ];
 
   const letterText = `My Dearest Maaaaaa,
@@ -89,64 +84,6 @@ Your Nanna 💖`;
     }
   }, [showMessage, isTypingComplete, letterText]);
 
-  // Auto-play gallery functionality
-  useEffect(() => {
-    if (showSlideshow && isAutoPlaying) {
-      startAutoPlay();
-    } else {
-      stopAutoPlay();
-    }
-
-    return () => {
-      stopAutoPlay();
-    };
-  }, [showSlideshow, isAutoPlaying, currentPhotoIndex]);
-
-  const startAutoPlay = () => {
-    stopAutoPlay(); // Clear any existing timer
-    
-    autoPlayTimerRef.current = setInterval(() => {
-      goToNextPhoto();
-    }, autoPlayInterval);
-  };
-
-  const stopAutoPlay = () => {
-    if (autoPlayTimerRef.current) {
-      clearInterval(autoPlayTimerRef.current);
-      autoPlayTimerRef.current = null;
-    }
-  };
-
-  const toggleAutoPlay = () => {
-    setIsAutoPlaying(!isAutoPlaying);
-  };
-
-  const goToNextPhoto = () => {
-    const nextIndex = (currentPhotoIndex + 1) % photos.length;
-    setCurrentPhotoIndex(nextIndex);
-    
-    if (galleryTrackRef.current) {
-      const slideWidth = galleryTrackRef.current.clientWidth;
-      galleryTrackRef.current.scrollTo({
-        left: nextIndex * slideWidth,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  const goToPrevPhoto = () => {
-    const prevIndex = currentPhotoIndex === 0 ? photos.length - 1 : currentPhotoIndex - 1;
-    setCurrentPhotoIndex(prevIndex);
-    
-    if (galleryTrackRef.current) {
-      const slideWidth = galleryTrackRef.current.clientWidth;
-      galleryTrackRef.current.scrollTo({
-        left: prevIndex * slideWidth,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   // Show toast notification
   const showToastMessage = (message) => {
     setToastMessage(message);
@@ -156,34 +93,27 @@ Your Nanna 💖`;
     }, 3000);
   };
 
-  // Create falling confetti particles with more celebration emojis
+  // Create falling confetti particles
   const createFallingConfetti = () => {
     const newConfetti = [];
-    // Added more 🎉 and 🥰 emojis as requested
-    const emojis = ['🎉', '🎉', '🥰', '🎊', '✨', '🎈', '🥳', '🎂', '🎁', '💝', '💖', '💕', '🥰', '🎉', '🥰'];
+    const emojis = ['🎉', '🎊', '✨', '🎈', '🥳', '🎂', '🎁', '💝', '💖', '💕'];
     const colors = ['#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', '#118AB2', '#EF476F', '#FFD166', '#9B5DE5', '#00BBF9', '#00F5D4'];
     
-    for (let i = 0; i < 120; i++) { // Increased number of particles
-      const startX = Math.random() * 100; // Random horizontal position (0-100%)
-      const endX = startX + (Math.random() - 0.5) * 10; // Small horizontal movement
-      const duration = 3 + Math.random() * 2; // Longer duration for smooth fall
-      const delay = Math.random() * 1;
+    for (let i = 0; i < 100; i++) {
+      const startX = Math.random() * 100;
+      const endX = startX + (Math.random() - 0.5) * 40;
+      const duration = 3 + Math.random() * 2;
+      const delay = Math.random() * 1.5;
       const size = 20 + Math.random() * 30;
-      // Weight the selection towards 🎉 and 🥰
-      let emoji;
-      const rand = Math.random();
-      if (rand < 0.3) emoji = '🎉';
-      else if (rand < 0.5) emoji = '🥰';
-      else emoji = emojis[Math.floor(Math.random() * emojis.length)];
-      
+      const emoji = emojis[Math.floor(Math.random() * emojis.length)];
       const color = colors[Math.floor(Math.random() * colors.length)];
       
       newConfetti.push({
         id: Date.now() + i,
         startX,
         endX,
-        startY: -10, // Start above the screen
-        endY: 100, // Fall to bottom of screen
+        startY: -10 - Math.random() * 20,
+        endY: 110,
         size,
         emoji,
         color,
@@ -191,7 +121,7 @@ Your Nanna 💖`;
         rotationSpeed: 0.5 + Math.random() * 2,
         duration,
         delay,
-        opacity: 0.9 + Math.random() * 0.1
+        opacity: 0.8 + Math.random() * 0.2
       });
     }
     
@@ -199,7 +129,7 @@ Your Nanna 💖`;
     
     setTimeout(() => {
       setFallingConfetti([]);
-    }, 6000); // Match the longest duration
+    }, 6000);
   };
 
   // Celebration effect for first slice with falling confetti
@@ -227,7 +157,7 @@ Your Nanna 💖`;
     }
     
     setConfettiParticles(newParticles);
-    showToastMessage('First slice cut! Opening gallery... 🎉🥰');
+    showToastMessage('First slice cut! Opening gallery...');
     
     setTimeout(() => {
       setCelebrationActive(false);
@@ -272,8 +202,6 @@ Your Nanna 💖`;
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX);
     setIsScrolling(true);
-    // Pause auto-play on user interaction
-    setIsAutoPlaying(false);
   };
 
   const handleTouchMove = (e) => {
@@ -289,9 +217,9 @@ Your Nanna 💖`;
     
     if (Math.abs(difference) > swipeThreshold) {
       if (difference > 0) {
-        goToNextPhoto();
+        scrollGallery('next');
       } else {
-        goToPrevPhoto();
+        scrollGallery('prev');
       }
     }
     
@@ -302,9 +230,6 @@ Your Nanna 💖`;
 
   // Manual scroll handling
   const scrollGallery = (direction) => {
-    // Pause auto-play on manual navigation
-    setIsAutoPlaying(false);
-    
     if (galleryTrackRef.current) {
       const track = galleryTrackRef.current;
       const scrollAmount = track.clientWidth;
@@ -313,25 +238,6 @@ Your Nanna 💖`;
         left: direction === 'next' ? scrollAmount : -scrollAmount,
         behavior: 'smooth'
       });
-      
-      // Update current photo index based on scroll position
-      const newIndex = direction === 'next' 
-        ? (currentPhotoIndex + 1) % photos.length
-        : currentPhotoIndex === 0 ? photos.length - 1 : currentPhotoIndex - 1;
-      
-      setCurrentPhotoIndex(newIndex);
-    }
-  };
-
-  // Update current index when scroll changes
-  const handleGalleryScroll = () => {
-    if (galleryTrackRef.current) {
-      const scrollLeft = galleryTrackRef.current.scrollLeft;
-      const slideWidth = galleryTrackRef.current.clientWidth;
-      const newIndex = Math.round(scrollLeft / slideWidth);
-      if (newIndex !== currentPhotoIndex) {
-        setCurrentPhotoIndex(newIndex);
-      }
     }
   };
 
@@ -426,23 +332,6 @@ Your Nanna 💖`;
     }
   };
 
-  // Enhanced grid slice click (mobile) with 3D animation
-  const handleEnhancedSliceClick = (id, e) => {
-    if (e) e.stopPropagation();
-    if (candlesLit) return;
-
-    const isFirstSlice = cakeSlices.filter(s => s.cut).length === 0;
-
-    setCakeSlices((prev) => prev.map((s) => (s.id === id ? { ...s, cut: true } : s)));
-
-    // Trigger celebration for first slice and navigate to gallery
-    if (isFirstSlice) {
-      setTimeout(() => {
-        triggerCelebration();
-      }, 500);
-    }
-  };
-
   // Full reset to beginning
   const resetAll = () => {
     setShowSlideshow(false);
@@ -456,7 +345,6 @@ Your Nanna 💖`;
     setShowToast(false);
     setCandlesLit(true);
     setIsBlowing(false);
-    setIsAutoPlaying(true);
 
     setCakeSlices([
       { id: 1, cut: false, angle: 0 },
@@ -501,7 +389,7 @@ Your Nanna 💖`;
         </div>
       )}
 
-      {/* Falling Confetti Particles with more 🎉🥰 */}
+      {/* Falling Confetti Particles */}
       {fallingConfetti.map((confetti) => (
         <div
           key={confetti.id}
@@ -518,7 +406,7 @@ Your Nanna 💖`;
             animationDuration: `${confetti.duration}s`,
             animationDelay: `${confetti.delay}s`,
             opacity: confetti.opacity,
-            zIndex: 9999,
+            transform: `rotate(${confetti.rotation}deg)`,
           }}
         >
           {confetti.emoji}
@@ -574,25 +462,6 @@ Your Nanna 💖`;
           {msg.text}
         </div>
       ))}
-
-      {/* Celebration emojis falling */}
-      {celebrationActive && (
-        <div className="celebration-emojis">
-          {[...Array(30)].map((_, i) => (
-            <div
-              key={i}
-              className="celebration-emoji"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                fontSize: `${20 + Math.random() * 30}px`,
-              }}
-            >
-              {Math.random() > 0.5 ? '🎉' : '🥰'}
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Main content (teddy + letter) */}
       {!showCake && !showSlideshow && (
@@ -721,14 +590,14 @@ Your Nanna 💖`;
         </div>
       )}
 
-      {/* Cake scene (desktop round cake + mobile enhanced grid) */}
+      {/* Cake scene (round cake for all screens) */}
       {showCake && !showSlideshow && (
         <div className="cake-scene" role="region" aria-label="Cake scene">
           <h1 className="cake-title">Time to Cut Your Birthday Cake 🎂</h1>
 
           {/* Round cake container for all screen sizes */}
           <div className="round-cake-container" aria-hidden={false}>
-            {/* Candles positioned on cake using percentages - USING PERFECT POSITIONS FROM EXISTING CODE */}
+            {/* Candles positioned on cake using percentages */}
             {candlesLit && (
               <div className="candles-container">
                 {candlePositions.map((candle) => (
@@ -907,33 +776,14 @@ Your Nanna 💖`;
       {showSlideshow && (
         <div className="slideshow-overlay" role="dialog" aria-modal="true">
           <div className="slideshow-container">
-            <h1 className="slideshow-title">Beautiful Memories💕</h1>
-            {/* <p className="slideshow-subtitle">
-              {isAutoPlaying ? `Auto-playing every ${autoPlayInterval/1000} seconds` : 'Paused - Click play to resume'}
-            </p> */}
-
-            {/* Auto-play controls */}
-            <div className="auto-play-controls">
-              <button 
-                className="auto-play-btn" 
-                onClick={toggleAutoPlay}
-                aria-label={isAutoPlaying ? "Pause auto-play" : "Start auto-play"}
-              >
-                {isAutoPlaying ? '⏸️ Pause' : '▶️ Play'}
-              </button>
-              {/* <div className="auto-play-info">
-                Image {currentPhotoIndex + 1} of {photos.length}
-              </div> */}
-            </div>
+            <h1 className="slideshow-title">Beautiful Memories 💕</h1>
+            <p className="slideshow-subtitle">Swipe or use arrows to navigate</p>
 
             {/* Horizontal Scrolling Gallery */}
             <div className="gallery-container">
               <button 
                 className="gallery-nav-btn gallery-prev-btn" 
-                onClick={() => {
-                  setIsAutoPlaying(false);
-                  goToPrevPhoto();
-                }}
+                onClick={() => scrollGallery('prev')}
                 aria-label="Previous photo"
               >
                 <ChevronLeft size={32} />
@@ -945,7 +795,6 @@ Your Nanna 💖`;
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
-                onScroll={handleGalleryScroll}
               >
                 {photos.map((photo, index) => (
                   <div className="gallery-slide" key={index}>
@@ -965,10 +814,7 @@ Your Nanna 💖`;
 
               <button 
                 className="gallery-nav-btn gallery-next-btn" 
-                onClick={() => {
-                  setIsAutoPlaying(false);
-                  goToNextPhoto();
-                }}
+                onClick={() => scrollGallery('next')}
                 aria-label="Next photo"
               >
                 <ChevronRight size={32} />
@@ -981,14 +827,13 @@ Your Nanna 💖`;
                   key={index}
                   className={`gallery-dot ${index === currentPhotoIndex ? 'active' : ''}`}
                   onClick={() => {
-                    setIsAutoPlaying(false);
-                    setCurrentPhotoIndex(index);
                     if (galleryTrackRef.current) {
                       const slideWidth = galleryTrackRef.current.clientWidth;
                       galleryTrackRef.current.scrollTo({
                         left: index * slideWidth,
                         behavior: 'smooth'
                       });
+                      setCurrentPhotoIndex(index);
                     }
                   }}
                   aria-label={`Go to photo ${index + 1}`}
