@@ -51,14 +51,14 @@ const Home = () => {
 
   // Photo URLs
   const photos = [
-    '/assests/photo1.png',
-    '/assests/photo2.png',
-    '/assests/photo3.png',
-    '/assests/photo4.png',
-    '/assests/photo1.png',
-    '/assests/photo2.png',
-    '/assests/photo3.png',
-    '/assests/photo4.png',
+    '/assests/photo1.jpg',
+    '/assests/photo2.jpg',
+    '/assests/photo3.jpg',
+    '/assests/photo4.jpg',
+    '/assests/photo5.jpg',
+    '/assests/photo1.jpg',
+    '/assests/photo2.jpg',
+    '/assests/photo3.jpg',
   ];
 
   const letterText = `My Dearest Maaaaaa,
