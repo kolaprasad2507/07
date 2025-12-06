@@ -55,10 +55,10 @@ const Home = () => {
     '/assests/photo2.jpg',
     '/assests/photo3.jpg',
     '/assests/photo4.jpg',
-    '/assests/photo5.jpg',
-    '/assests/photo1.jpg',
-    '/assests/photo2.jpg',
-    '/assests/photo3.jpg',
+    '/assests/photo5.png',
+    '/assests/photo6.jpg',
+    '/assests/photo7.jpg',
+    '/assests/photo8.png',
   ];
 
   const letterText = `My Dearest Maaaaaa,
