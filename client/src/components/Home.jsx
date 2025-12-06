@@ -28,28 +28,28 @@ const Home = () => {
   const [confettiParticles, setConfettiParticles] = useState([]);
   const [fallingConfetti, setFallingConfetti] = useState([]);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [autoPlayInterval, setAutoPlayInterval] = useState(3000); // 3 seconds interval
+  const [autoPlayInterval, setAutoPlayInterval] = useState(3000);
   const galleryTrackRef = useRef(null);
   const autoPlayTimerRef = useRef(null);
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
-
-  // Celebration particles
-  const [celebrationEmojis, setCelebrationEmojis] = useState([]);
+  
+  // Birthday celebration emojis state
+  const [birthdayEmojis, setBirthdayEmojis] = useState([]);
   
   // Toast notification
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  // Candle positions - USING PERFECT POSITIONS FROM EXISTING CODE
+  // Candle positions
   const [candlePositions] = useState([
     { id: 1, x: 36, y: 48.33 },
     { id: 2, x: 50, y: 43.33 },
     { id: 3, x: 64, y: 48.33 },
   ]);
 
-  // Photo URLs - replace with your actual images
+  // Photo URLs
   const photos = [
     '/assests/photo1.png',
     '/assests/photo2.png',
@@ -103,7 +103,7 @@ Your Nanna 💖`;
   }, [showSlideshow, isAutoPlaying, currentPhotoIndex]);
 
   const startAutoPlay = () => {
-    stopAutoPlay(); // Clear any existing timer
+    stopAutoPlay();
     
     autoPlayTimerRef.current = setInterval(() => {
       goToNextPhoto();
@@ -156,34 +156,71 @@ Your Nanna 💖`;
     }, 3000);
   };
 
-  // Create falling confetti particles with more celebration emojis
-  const createFallingConfetti = () => {
-    const newConfetti = [];
-    // Added more 🎉 and 🥰 emojis as requested
+  // Create falling birthday celebration emojis (🎉 and 🥰)
+  const createBirthdayEmojis = () => {
+    const newEmojis = [];
     const emojis = ['🎉', '🎉', '🥰', '🎊', '✨', '🎈', '🥳', '🎂', '🎁', '💝', '💖', '💕', '🥰', '🎉', '🥰'];
-    const colors = ['#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', '#118AB2', '#EF476F', '#FFD166', '#9B5DE5', '#00BBF9', '#00F5D4'];
     
-    for (let i = 0; i < 120; i++) { // Increased number of particles
-      const startX = Math.random() * 100; // Random horizontal position (0-100%)
-      const endX = startX + (Math.random() - 0.5) * 10; // Small horizontal movement
-      const duration = 3 + Math.random() * 2; // Longer duration for smooth fall
+    for (let i = 0; i < 40; i++) {
+      const startX = Math.random() * 100;
+      const duration = 2 + Math.random() * 2;
       const delay = Math.random() * 1;
       const size = 20 + Math.random() * 30;
-      // Weight the selection towards 🎉 and 🥰
+      
+      // Weight towards 🎉 and 🥰
       let emoji;
       const rand = Math.random();
-      if (rand < 0.3) emoji = '🎉';
-      else if (rand < 0.5) emoji = '🥰';
+      if (rand < 0.4) emoji = '🎉';
+      else if (rand < 0.7) emoji = '🥰';
       else emoji = emojis[Math.floor(Math.random() * emojis.length)];
       
+      // Random rotation and animation variations
+      const rotationStart = Math.random() * 360;
+      const rotationEnd = rotationStart + 360 + Math.random() * 180;
+      const fallDistance = 100 + Math.random() * 50;
+      
+      newEmojis.push({
+        id: Date.now() + i,
+        startX,
+        size,
+        emoji,
+        rotationStart,
+        rotationEnd,
+        fallDistance,
+        duration,
+        delay,
+        opacity: 0.8 + Math.random() * 0.2
+      });
+    }
+    
+    setBirthdayEmojis(newEmojis);
+    
+    // Clear emojis after animation completes
+    setTimeout(() => {
+      setBirthdayEmojis([]);
+    }, (Math.max(...newEmojis.map(e => e.duration + e.delay)) * 1000) + 1000);
+  };
+
+  // Create falling confetti particles
+  const createFallingConfetti = () => {
+    const newConfetti = [];
+    const colors = ['#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', '#118AB2', '#EF476F', '#FFD166', '#9B5DE5', '#00BBF9', '#00F5D4'];
+    
+    for (let i = 0; i < 80; i++) {
+      const startX = Math.random() * 100;
+      const endX = startX + (Math.random() - 0.5) * 10;
+      const duration = 3 + Math.random() * 2;
+      const delay = Math.random() * 1;
+      const size = 20 + Math.random() * 30;
+      const emoji = Math.random() > 0.5 ? '🎉' : '🥰';
       const color = colors[Math.floor(Math.random() * colors.length)];
       
       newConfetti.push({
         id: Date.now() + i,
         startX,
         endX,
-        startY: -10, // Start above the screen
-        endY: 100, // Fall to bottom of screen
+        startY: -10,
+        endY: 100,
         size,
         emoji,
         color,
@@ -199,12 +236,13 @@ Your Nanna 💖`;
     
     setTimeout(() => {
       setFallingConfetti([]);
-    }, 6000); // Match the longest duration
+    }, 6000);
   };
 
-  // Celebration effect for first slice with falling confetti
+  // Celebration effect for first slice with birthday emojis and confetti
   const triggerCelebration = () => {
     setCelebrationActive(true);
+    createBirthdayEmojis();
     createFallingConfetti();
     
     const newParticles = [];
@@ -247,7 +285,6 @@ Your Nanna 💖`;
     
     setIsBlowing(true);
     
-    // Create blowing effect particles
     const blowParticles = [];
     for (let i = 0; i < 20; i++) {
       blowParticles.push({
@@ -260,7 +297,6 @@ Your Nanna 💖`;
       });
     }
     
-    // Show blow animation
     setTimeout(() => {
       setCandlesLit(false);
       setIsBlowing(false);
@@ -272,7 +308,6 @@ Your Nanna 💖`;
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX);
     setIsScrolling(true);
-    // Pause auto-play on user interaction
     setIsAutoPlaying(false);
   };
 
@@ -302,7 +337,6 @@ Your Nanna 💖`;
 
   // Manual scroll handling
   const scrollGallery = (direction) => {
-    // Pause auto-play on manual navigation
     setIsAutoPlaying(false);
     
     if (galleryTrackRef.current) {
@@ -314,7 +348,6 @@ Your Nanna 💖`;
         behavior: 'smooth'
       });
       
-      // Update current photo index based on scroll position
       const newIndex = direction === 'next' 
         ? (currentPhotoIndex + 1) % photos.length
         : currentPhotoIndex === 0 ? photos.length - 1 : currentPhotoIndex - 1;
@@ -347,27 +380,38 @@ Your Nanna 💖`;
     };
   }, [showMessage, showSlideshow]);
 
-  // Particle effect when clicking background
-  const handleParticleClick = (e) => {
-    if (showMessage || showCake || showSlideshow) return;
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
+  // Fixed: Particle effect when clicking anywhere
+  const handleGlobalClick = (e) => {
+    // Don't create particles if clicking on interactive elements
+    if (e.target.tagName === 'BUTTON' || 
+        e.target.closest('button') || 
+        e.target.closest('.modal-content') ||
+        e.target.closest('.slideshow-container')) {
+      return;
+    }
+    
     const newParticle = {
       id: Date.now() + Math.random(),
-      x,
-      y,
+      x: e.clientX,
+      y: e.clientY,
       createdAt: Date.now(),
     };
-
+    
     setParticles((prev) => [...prev, newParticle]);
-
+    
     setTimeout(() => {
       setParticles((prev) => prev.filter((p) => p.id !== newParticle.id));
     }, 2000);
   };
+
+  // Add this useEffect to attach global click handler
+  useEffect(() => {
+    document.addEventListener('click', handleGlobalClick);
+    
+    return () => {
+      document.removeEventListener('click', handleGlobalClick);
+    };
+  }, []);
 
   // Open letter modal
   const handleLetterClick = (e) => {
@@ -426,23 +470,6 @@ Your Nanna 💖`;
     }
   };
 
-  // Enhanced grid slice click (mobile) with 3D animation
-  const handleEnhancedSliceClick = (id, e) => {
-    if (e) e.stopPropagation();
-    if (candlesLit) return;
-
-    const isFirstSlice = cakeSlices.filter(s => s.cut).length === 0;
-
-    setCakeSlices((prev) => prev.map((s) => (s.id === id ? { ...s, cut: true } : s)));
-
-    // Trigger celebration for first slice and navigate to gallery
-    if (isFirstSlice) {
-      setTimeout(() => {
-        triggerCelebration();
-      }, 500);
-    }
-  };
-
   // Full reset to beginning
   const resetAll = () => {
     setShowSlideshow(false);
@@ -452,7 +479,7 @@ Your Nanna 💖`;
     setCelebrationActive(false);
     setConfettiParticles([]);
     setFallingConfetti([]);
-    setCelebrationEmojis([]);
+    setBirthdayEmojis([]);
     setShowToast(false);
     setCandlesLit(true);
     setIsBlowing(false);
@@ -471,7 +498,7 @@ Your Nanna 💖`;
   };
 
   return (
-    <div className="birthday-container" onClick={handleParticleClick}>
+    <div className="birthday-container">
       {/* floating decorative hearts */}
       <div className="floating-hearts-bg" aria-hidden="true">
         {[...Array(20)].map((_, i) => (
@@ -501,7 +528,28 @@ Your Nanna 💖`;
         </div>
       )}
 
-      {/* Falling Confetti Particles with more 🎉🥰 */}
+      {/* Birthday Celebration Emojis falling from top to bottom */}
+      {birthdayEmojis.map((emoji) => (
+        <div
+          key={emoji.id}
+          className="birthday-emoji"
+          style={{
+            left: `${emoji.startX}%`,
+            fontSize: `${emoji.size}px`,
+            animationDuration: `${emoji.duration}s`,
+            animationDelay: `${emoji.delay}s`,
+            '--rotation-start': `${emoji.rotationStart}deg`,
+            '--rotation-end': `${emoji.rotationEnd}deg`,
+            '--fall-distance': `${emoji.fallDistance}vh`,
+            opacity: emoji.opacity,
+            zIndex: 9999,
+          }}
+        >
+          {emoji.emoji}
+        </div>
+      ))}
+
+      {/* Falling Confetti Particles */}
       {fallingConfetti.map((confetti) => (
         <div
           key={confetti.id}
@@ -518,7 +566,7 @@ Your Nanna 💖`;
             animationDuration: `${confetti.duration}s`,
             animationDelay: `${confetti.delay}s`,
             opacity: confetti.opacity,
-            zIndex: 9999,
+            zIndex: 9998,
           }}
         >
           {confetti.emoji}
@@ -556,7 +604,7 @@ Your Nanna 💖`;
             top: `${particle.y}px`,
           }}
         >
-          💕
+          💖
         </div>
       ))}
 
@@ -574,25 +622,6 @@ Your Nanna 💖`;
           {msg.text}
         </div>
       ))}
-
-      {/* Celebration emojis falling */}
-      {celebrationActive && (
-        <div className="celebration-emojis">
-          {[...Array(30)].map((_, i) => (
-            <div
-              key={i}
-              className="celebration-emoji"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                fontSize: `${20 + Math.random() * 30}px`,
-              }}
-            >
-              {Math.random() > 0.5 ? '🎉' : '🥰'}
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Main content (teddy + letter) */}
       {!showCake && !showSlideshow && (
@@ -721,14 +750,14 @@ Your Nanna 💖`;
         </div>
       )}
 
-      {/* Cake scene (desktop round cake + mobile enhanced grid) */}
+      {/* Cake scene */}
       {showCake && !showSlideshow && (
         <div className="cake-scene" role="region" aria-label="Cake scene">
           <h1 className="cake-title">Time to Cut Your Birthday Cake 🎂</h1>
 
           {/* Round cake container for all screen sizes */}
           <div className="round-cake-container" aria-hidden={false}>
-            {/* Candles positioned on cake using percentages - USING PERFECT POSITIONS FROM EXISTING CODE */}
+            {/* Candles positioned on cake using percentages */}
             {candlesLit && (
               <div className="candles-container">
                 {candlePositions.map((candle) => (
@@ -908,9 +937,6 @@ Your Nanna 💖`;
         <div className="slideshow-overlay" role="dialog" aria-modal="true">
           <div className="slideshow-container">
             <h1 className="slideshow-title">Beautiful Memories💕</h1>
-            {/* <p className="slideshow-subtitle">
-              {isAutoPlaying ? `Auto-playing every ${autoPlayInterval/1000} seconds` : 'Paused - Click play to resume'}
-            </p> */}
 
             {/* Auto-play controls */}
             <div className="auto-play-controls">
@@ -921,9 +947,6 @@ Your Nanna 💖`;
               >
                 {isAutoPlaying ? '⏸️ Pause' : '▶️ Play'}
               </button>
-              {/* <div className="auto-play-info">
-                Image {currentPhotoIndex + 1} of {photos.length}
-              </div> */}
             </div>
 
             {/* Horizontal Scrolling Gallery */}
