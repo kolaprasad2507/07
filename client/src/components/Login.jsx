@@ -12,7 +12,7 @@ const Login = () => {
   const [particles, setParticles] = useState([]);
   
   const navigate = useNavigate();
-  const correctPin = '1007'; // Hard-coded PIN
+  const correctPin = '0725'; // Hard-coded PIN
 
   // Create heart particles
   const createHeartParticles = (x, y) => {
